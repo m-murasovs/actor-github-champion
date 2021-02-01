@@ -10,7 +10,7 @@ The actor should send a notification, if possible to Slack/somewhere else. Maybe
 
 ## How to use
 
-You will need a GitHub API token  - find it at <https://github.com/settings/tokens/new>
+You will need a GitHub API token with the **repo** thingy granted  - find it at <https://github.com/settings/tokens/new>
 
 ## Inputs
 
