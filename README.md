@@ -12,6 +12,8 @@ The actor should send a notification, if possible to Slack/somewhere else. Maybe
 
 You will need a GitHub API token with the **repo** thingy granted  - find it at <https://github.com/settings/tokens/new>
 
+You will need to make sure issues are assigned to the person who does them - (it's good Git practice anyway :) ), otherwise, they would be counted for the person that closes them, but that's not always who did the work.
+
 ## Inputs
 
 - Repo(s) - startUrl, add as many as you want
@@ -42,4 +44,8 @@ See "Output options" above
 
 Here at Apify, we like to have fun. We work to maintain a team spirit. When we go on a team building, we go hard.
 
-In the spirit of good team humour, we made this fun tool that creates a slightly humorous competition that isn't a competition for your team.
+As the company grows, it's easy to lose track of your team. Of course, this actor isn't meant to replace interaction or team spirit, more to supplement it, to show you what your colleagues are up to. It will also help reveal the secret workhorses, the ones who review every pull request, write the most code, and don't always get the visibility they deserve because the thing they do isn't glamorous or something everyone can understand easily. At the very least, they will see that this person wrote a lot of code :D
+
+In the spirit of good team humor, we made this fun tool that creates a slightly humorous competition that isn't a competition for your team.
+
+In these times of team separation, maybe even seeing how many lines of code your colleagues have added may help you feel closer to them. Add to that a bit of friendly competition, and it might help improve the vibe even more.
