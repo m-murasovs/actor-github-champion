@@ -4,22 +4,19 @@
     "type": "object",
     "schemaVersion": 1,
     "properties": {
-        "REPOSITORIES": {
-            "title": "Repositories",
-            "type": "array",
-            "description": "A JSON array of repository names. E.g. \"apify-docs\"",
-            "editor": "json",
-            "prefill": [
-                "apify-docs",
-                "apify-js"
-            ]
-        },
         "REPOSITORY_OWNER": {
             "title": "Repository owner",
             "type": "string",
             "description": "The owner's or organization's name. E.g. \"apify\"",
             "editor": "textfield",
             "prefill": "apify"
+        },
+        "REPOSITORIES": {
+            "title": "Repositories",
+            "type": "array",
+            "description": "A JSON array of repository names. E.g. [\"apify-docs\", \"apify-web\"]. If left blank, the actor will include all of the owner's repositories.",
+            "editor": "json",
+            "nullable": true
         },
         "NUMBER_OF_WEEKS": {
             "title": "Number of weeks",

@@ -1,3 +1,9 @@
+exports.getAllRepoNames = (allOrgRepos) => {
+    const names = []
+    allOrgRepos.map((repo) => names.push(repo.name));
+    return names;
+}
+
 exports.mergeContributions = (contributions, user, numberOfWeeks) => {
     const result = {};
 
@@ -22,7 +28,7 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
 
 exports.filterPullsByTimePeriod = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
     const pullCreationDate = new Date(pull.created_at);
-    return pullCreationDate > timePeriodStartDate;
+    return pullCreationDate > timePeriodStartDate && pull.base.label !== 'apify:master';
 });
 
 exports.getUserPullReviews = (pullReviews, userLogin) => {

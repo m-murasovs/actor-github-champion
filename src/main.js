@@ -7,6 +7,7 @@ const {
     filterPullsByTimePeriod,
     getUserPullReviews,
     hasContributions,
+    getAllRepoNames,
 } = require('./helpers.js');
 
 const { utils: { log } } = Apify;
@@ -29,7 +30,17 @@ Apify.main(async () => {
         (todaysDate.getDate() - numberOfDays),
     );
 
-    for (const repository of REPOSITORIES) {
+    // If REPOSITORIES is empty, iterate through all of the owner's repos
+    let allRepos = '';
+    if (!REPOSITORIES) {
+        allRepos = await octokit.teams.listReposInOrg({
+            org: REPOSITORY_OWNER,
+            team_slug: 'platform-team',
+        });
+    }
+    const allRepoNames = REPOSITORIES || getAllRepoNames(allRepos.data);
+
+    for (const repository of allRepoNames) {
         const repoStats = [];
 
         console.log(`--- Getting stats for **${repository}**\n`);
@@ -124,6 +135,10 @@ Apify.main(async () => {
         // stats.push(repoStats);
         await store.setValue(repository, repoStats)
     }
+
+    // TODO
+    // sort the top 3 users from each repo by number of issues closed, PR reviews, and PRs created. Show additions/deletions just for fun
+    // return this in a dataset, or maybe it can be sent somewhere? But that can also be done by webhook
 
     console.log('Done!');
 });
