@@ -128,4 +128,6 @@ Apify.main(async () => {
     await Apify.pushData({
         stats,
     });
+
+    console.log('Done');
 });
