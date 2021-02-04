@@ -19,7 +19,7 @@ const octokit = new Octokit({
 
 Apify.main(async () => {
     const { REPOSITORIES, REPOSITORY_OWNER, NUMBER_OF_WEEKS } = await Apify.getInput();
-    const stats = [];
+    const store = await Apify.openKeyValueStore('github-metrics');
 
     const todaysDate = new Date();
     const numberOfDays = NUMBER_OF_WEEKS * 7;
@@ -30,11 +30,9 @@ Apify.main(async () => {
     );
 
     for (const repository of REPOSITORIES) {
-        const repoStats = {
-            [repository]: [],
-        };
+        const repoStats = [];
 
-        console.log(`--- Getting **${repository}** stats\n`);
+        console.log(`--- Getting stats for **${repository}**\n`);
 
         // Get repo contributors
         const { data: contributors } = await octokit.repos.listContributors({
@@ -118,16 +116,14 @@ Apify.main(async () => {
 
             // Store the user's entry if not empty
             if (hasContributions(userEntry)) {
-                repoStats[repository].push(userEntry);
+                repoStats.push(userEntry);
                 console.log(`Adding ${user.login}'s contributions \n`);
             }
         }
 
-        stats.push(repoStats);
+        // stats.push(repoStats);
+        await store.setValue(repository, repoStats)
     }
-    await Apify.pushData({
-        stats,
-    });
 
-    console.log('Done');
+    console.log('Done!');
 });
