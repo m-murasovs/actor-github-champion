@@ -18,7 +18,8 @@
             "title": "Repository owner",
             "type": "string",
             "description": "The owner's or organization's name. E.g. \"apify\"",
-            "editor": "textfield"
+            "editor": "textfield",
+            "prefill": "apify"
         },
         "NUMBER_OF_WEEKS": {
             "title": "Number of weeks",
