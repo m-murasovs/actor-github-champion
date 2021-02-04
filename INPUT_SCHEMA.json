@@ -13,23 +13,22 @@
                 "apify-docs",
                 "apify-js"
             ]
+        },
+        "REPOSITORY_OWNER": {
+            "title": "Repository owner",
+            "type": "string",
+            "description": "The owner's or organization's name. E.g. \"apify\"",
+            "editor": "textfield"
+        },
+        "NUMBER_OF_WEEKS": {
+            "title": "Number of weeks",
+            "type": "integer",
+            "description": "The number of weeks, from the day of the actor's run, to monitor. E.g. If you would like to monitor the activity from the past 4 weeks, enter 4. Defaults to 2.",
+            "default": 2,
+            "editor": "number"
         }
     },
-    "REPOSITORY_OWNER": {
-        "title": "Repository owner",
-        "type": "string",
-        "description": "The owner's or organization's name. E.g. \"apify\"",
-        "editor": "textfield"
-    },
-    "NUMBER_OF_WEEKS": {
-        "title": "Number of weeks",
-        "type": "integer",
-        "description": "The number of weeks, from the day of the actor's run, to monitor. E.g. If you would like to monitor the activity from the past 4 weeks, enter 4. Defaults to 2.",
-        "default": 2,
-        "editor": "number"
-    }
-},
-"required": [
-    "REPOSITORY_OWNER"
-]
+    "required": [
+        "REPOSITORY_OWNER"
+    ]
 }
