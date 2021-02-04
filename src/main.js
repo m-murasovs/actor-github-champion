@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const {
     mergeContributions,
-    filterPullsByTimePeriod,
+    filterPulls,
     getUserPullReviews,
     hasContributions,
     getAllRepoNames,
@@ -64,11 +64,11 @@ Apify.main(async () => {
             state: 'all',
         });
 
-        const pullsCreatedWithinTimePeriod = await filterPullsByTimePeriod(pulls, timePeriodStartDate);
+        const filteredPulls = await filterPulls(pulls, timePeriodStartDate);
 
         // Get reviews for each pull
         const pullReviews = [];
-        for (const pull of pullsCreatedWithinTimePeriod) {
+        for (const pull of filteredPulls) {
             const { data: reviews } = await octokit.request(
                 'GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
                 {
@@ -111,7 +111,7 @@ Apify.main(async () => {
             }
 
             // Get user PRs - created
-            const pullsCreatedByUser = pullsCreatedWithinTimePeriod.filter((pull) => pull.user.login === user.login);
+            const pullsCreatedByUser = filteredPulls.filter((pull) => pull.user.login === user.login);
             userEntry.pullsCreated = pullsCreatedByUser.length;
 
             // Get user PRs - reviewed

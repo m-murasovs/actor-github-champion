@@ -26,9 +26,11 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
     return result;
 };
 
-exports.filterPullsByTimePeriod = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
-    const pullCreationDate = new Date(pull.created_at);
-    return pullCreationDate > timePeriodStartDate && pull.base.label !== 'apify:master';
+exports.filterPulls = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
+    const pullIsFromTimePeriod = new Date(pull.created_at) > timePeriodStartDate;
+    const pullIsNotRelease = pull.base.label !== 'apify:master';
+
+    return pullIsFromTimePeriod && pullIsNotRelease;
 });
 
 exports.getUserPullReviews = (pullReviews, userLogin) => {
