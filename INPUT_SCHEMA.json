@@ -9,7 +9,10 @@
       "type": "array",
       "description": "A JSON array of repository names. E.g. \"apify-docs\"",
       "editor": "json",
-      "prefill": "[\"apify-docs\"]"
+      "prefill": [
+        "apify-docs",
+        "apify-js"
+      ]
     },
     "REPOSITORY_OWNER": {
       "title": "Repository owner",
