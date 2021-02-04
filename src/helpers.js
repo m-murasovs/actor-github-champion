@@ -1,15 +1,21 @@
-exports.mergeContributions = (data) => {
+exports.mergeContributions = (contributions, user, numberOfWeeks) => {
     const result = {};
 
-    data.forEach((item) => {
-        for (let [key, value] of Object.entries(item)) {
-            // Exclude the 'week' key from the contributions object
-            if (result[key] && key !== 'w') {
-                result[key] += value;
-            } else if (!result[key] && key !== 'w') {
-                result[key] = value;
-            }
-        }
+    contributions.map((item) => {
+        if (item.author.login === user.login) {
+            const contributionsArray = item.weeks.slice(Math.max(item.weeks.length - numberOfWeeks, 0));
+
+            contributionsArray.map((item) => {
+                for (let [key, value] of Object.entries(item)) {
+                    // Exclude the 'week' key from the contributions object
+                    if (result[key] && key !== 'w') {
+                        result[key] += value;
+                    } else if (!result[key] && key !== 'w') {
+                        result[key] = value;
+                    }
+                }
+            });
+        };
     });
 
     return result;
@@ -22,13 +28,13 @@ exports.filterPullsByTimePeriod = (pulls, timePeriodStartDate) => {
     });
 }
 
-exports.getContributorPullReviews = (pullReviews, contributorLogin) => {
+exports.getUserPullReviews = (pullReviews, userLogin) => {
     let count = 0;
     for (const pull of pullReviews) {
         Object.values(pull).map((reviewArray) => {
             if (reviewArray.length) {
                 reviewArray.map(review => {
-                    if (review.user.login === contributorLogin) {
+                    if (review.user.login === userLogin) {
                         count += 1;
                     }
                 })
@@ -38,9 +44,9 @@ exports.getContributorPullReviews = (pullReviews, contributorLogin) => {
     return count;
 };
 
-exports.hasContributions = (contributorEntry) => {
-    const hasCommits = contributorEntry.contributions && contributorEntry.contributions.c;
-    const hasOtherActivity = contributorEntry.pullReviews || contributorEntry.pullsCreated || contributorEntry.issuesClosed;
+exports.hasContributions = (userEntry) => {
+    const hasCommits = userEntry.contributions && userEntry.contributions.c;
+    const hasOtherActivity = userEntry.pullReviews || userEntry.pullsCreated || userEntry.issuesClosed;
 
     return hasCommits || hasOtherActivity;
 }

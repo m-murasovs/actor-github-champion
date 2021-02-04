@@ -5,7 +5,7 @@ require('dotenv').config();
 const {
     mergeContributions,
     filterPullsByTimePeriod,
-    getContributorPullReviews,
+    getUserPullReviews,
     hasContributions } = require('./helpers.js')
 
 const { utils: { log } } = Apify;
@@ -30,8 +30,10 @@ Apify.main(async () => {
 
     for (const repository of REPOSITORIES) {
         const repoStats = {
-            [repository]: {},
+            [repository]: [],
         };
+
+        console.log(`--- Getting **${repository}** stats\n`);
 
         // Get repo contributors
         const { data: contributors } = await octokit.repos.listContributors({
@@ -39,15 +41,10 @@ Apify.main(async () => {
             repo: repository,
         });
 
-        // Get repo contributions
-        const { data: contributions } = await octokit.request(
-            'GET /repos/{owner}/{repo}/stats/contributors',
-            {
-                owner: REPOSITORY_OWNER,
-                repo: repository,
-            }
-        );
-        console.log(`Getting "${repository}" contributions`);
+        const { data: contributions } = await octokit.repos.getContributorsStats({
+            owner: REPOSITORY_OWNER,
+            repo: repository,
+        });
 
         // Get repo pull requests
         const { data: pulls } = await octokit.pulls.list({
@@ -57,7 +54,6 @@ Apify.main(async () => {
         });
 
         const pullsCreatedWithinTimePeriod = await filterPullsByTimePeriod(pulls, timePeriodStartDate);
-        console.log(`Getting "${repository}" pull requests`);
 
         // Get reviews for each pull
         const pullReviews = [];
@@ -87,44 +83,46 @@ Apify.main(async () => {
         )
 
 
-        // Build up the contributor data for each repository
-        for (const contributor of contributors) {
-            let contributorEntry = repoStats[repository][contributor.login];
-            contributorEntry = {};
-
-            console.log(`Analyzing ${contributor.login}'s contributions`);
+        // Build up the user data for each repository
+        for (const user of contributors) {
+            // let contributorEntry = repoStats[repository][user.login];
+            const userEntry = {
+                id: user.login,
+            };
 
             // Get user's contributions to repo from the last X number of weeks
-            contributions.map((item) => {
-                if (item.author.login === contributor.login) {
-                    const contributionsArray = item.weeks.slice(Math.max(item.weeks.length - NUMBER_OF_WEEKS, 0));
-                    return contributorEntry.contributions = mergeContributions(contributionsArray);
-                };
+            const userContributions = mergeContributions(contributions, user, NUMBER_OF_WEEKS);
+
+            for (const [key, value] of Object.entries(userContributions)) {
+                switch (key) {
+                    case 'a': userEntry.additions = value;
+                    case 'd': userEntry.deletions = value;
+                    case 'c': userEntry.commits = value;
+                }
+            }
+
+            // Get user PRs - created
+            const pullsCreatedByUser = pullsCreatedWithinTimePeriod.filter((pull) => {
+                return pull.user.login === user.login;
             });
+            userEntry.pullsCreated = pullsCreatedByUser.length;
 
-            // Get contributor PRs - created
-            const pullsCreatedByContributor = pullsCreatedWithinTimePeriod.filter((pull) => {
-                return pull.user.login === contributor.login;
-            });
-            contributorEntry.pullsCreated = pullsCreatedByContributor.length;
+            // Get user PRs - reviewed
+            userEntry.pullReviews = getUserPullReviews(pullReviews, user.login);
 
-            // Get contributor PRs - reviewed
-            contributorEntry.pullReviews = getContributorPullReviews(pullReviews, contributor.login);
-
-            // Get contributor issues closed
-            const issuesClosedByContributor = issues.filter((issue) => {
-                if (issue.assignee && issue.assignee.login === contributor.login) {
+            // Get user issues closed
+            const issuesClosedByUser = issues.filter((issue) => {
+                if (issue.assignee && issue.assignee.login === user.login) {
                     return issue;
                 };
             });
-            contributorEntry.issuesClosed = issuesClosedByContributor.length;
+            userEntry.issuesClosed = issuesClosedByUser.length;
 
-            // Store the contributor's entry if not empty
-            if (hasContributions(contributorEntry)) {
-                repoStats[repository][contributor.login] = contributorEntry
-            } else {
-                console.log('Inactive');
-            };
+            // Store the user's entry if not empty
+            if (hasContributions(userEntry)) {
+                repoStats[repository].push(userEntry);
+                console.log(`Adding ${user.login}'s contributions \n`);
+            }
         };
 
         stats.push(repoStats);
