@@ -5,8 +5,8 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
         if (item.author.login === user.login) {
             const contributionsArray = item.weeks.slice(Math.max(item.weeks.length - numberOfWeeks, 0));
 
-            contributionsArray.map((item) => {
-                for (const [key, value] of Object.entries(item)) {
+            contributionsArray.map((contr) => {
+                for (let [key, value] of Object.entries(contr)) {
                     // Exclude the 'week' key from the contributions object
                     if (result[key] && key !== 'w') {
                         result[key] += value;
@@ -15,9 +15,9 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
                     }
                 }
             });
-            return result;
         }
     });
+    return result;
 };
 
 exports.filterPullsByTimePeriod = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
