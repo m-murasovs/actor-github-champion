@@ -1,17 +1,31 @@
 {
-  "title": "PuppeteerCrawler Template",
-  "description": "lorem ipsum",
+  "title": "Github Champion",
+  "description": "This is the Github Champion actor's input schema",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
-    "startUrls": {
-      "title": "Start URLs",
+    "REPOSITORIES": {
+      "title": "Repositories",
       "type": "array",
-      "description": "URLs to start with.",
-      "editor": "requestListSources"
+      "description": "A JSON array of repository names. E.g. \"apify-docs\"",
+      "editor": "json",
+      "prefill": "[\"apify-docs\"]"
+    },
+    "REPOSITORY_OWNER": {
+      "title": "Repository owner",
+      "type": "string",
+      "description": "The owner's or organization's name. E.g. \"apify\"",
+      "editor": "textfield"
+    },
+    "NUMBER_OF_WEEKS": {
+      "title": "Number of weeks",
+      "type": "integer",
+      "description": "The number of weeks, from the day of the actor's run, to monitor. E.g. If you would like to monitor the activity from the past 4 weeks, enter 4. Defaults to 2.",
+      "default": 2,
+      "editor": "number"
     }
   },
   "required": [
-    "startUrls"
+    "REPOSITORY_OWNER"
   ]
 }
