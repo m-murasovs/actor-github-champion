@@ -14,11 +14,11 @@ Who is your organization's GitHub Champion?
 
 To use this actor with private repositories, you will need a GitHub API token with the **repo** permission granted  - find it at <https://github.com/settings/tokens/new> and save it as an **environment variable** named `GITHUB_API_TOKEN`.
 
-![Environment variable in app]({{@asset src/images/env_var.png}})
+![Environment variable in app](src/images/env_var.png)
 
 If you keep getting a `Not Found` error, it's probably to do with your authentication token. Make sure the entire `repo` permission is selected.
 
-![API token settings]({{@asset src/images/token_permissions.png}})
+![API token settings](src/images/token_permissions.png)
 
 By default, PRs agains the `master` branch are not counted to avoid counting releases. If your repository doesn't have a `develop` branch, enable this option.
 
