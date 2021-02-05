@@ -148,7 +148,7 @@ Apify.main(async () => {
 
     await topThrees.setValue('top-contributors', topContributorsInRepo);
     // Adding also to the default k-v store so users can check results right away
-    await Apify.setValue(topContributorsInRepo);
+    await Apify.setValue('top-contributors', topContributorsInRepo);
 
     console.log('Done!');
 });
