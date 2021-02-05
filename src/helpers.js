@@ -28,7 +28,7 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
 
 exports.filterPulls = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
     const pullIsFromTimePeriod = new Date(pull.created_at) > timePeriodStartDate;
-    const pullIsNotRelease = pull.base.label !== 'apify:master';
+    const pullIsNotRelease = pull.base.ref !== 'master';
 
     return pullIsFromTimePeriod && pullIsNotRelease;
 });
@@ -55,3 +55,22 @@ exports.hasContributions = (userEntry) => {
 
     return hasCommits || hasOtherActivity;
 };
+
+exports.getTopContributors = (repoStats) => {
+    const topContributors = [];
+    if (repoStats.length) {
+        repoStats.map(({ id, pullReviews, issuesClosed, pullsCreated }) => {
+            topContributors.push({
+                name: id,
+                total: (pullReviews + issuesClosed + pullsCreated),
+                pullReviews,
+                issuesClosed,
+                pullsCreated
+            });
+        });
+    }
+
+    topContributors.sort((a, b) => b.total - a.total);
+
+    return topContributors.slice(0, 3);
+}

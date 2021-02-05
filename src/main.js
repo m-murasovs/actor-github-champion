@@ -8,6 +8,7 @@ const {
     getUserPullReviews,
     hasContributions,
     getAllRepoNames,
+    getTopContributors
 } = require('./helpers.js');
 
 const { utils: { log } } = Apify;
@@ -20,7 +21,8 @@ const octokit = new Octokit({
 
 Apify.main(async () => {
     const { REPOSITORIES, REPOSITORY_OWNER, NUMBER_OF_WEEKS } = await Apify.getInput();
-    const store = await Apify.openKeyValueStore('github-metrics');
+    const store = await Apify.openKeyValueStore('detailed-repo-metrics');
+    const topContributorsInRepo = [];
 
     const todaysDate = new Date();
     const numberOfDays = NUMBER_OF_WEEKS * 7;
@@ -43,7 +45,7 @@ Apify.main(async () => {
     for (const repository of allRepoNames) {
         const repoStats = [];
 
-        console.log(`--- Getting stats for **${repository}**\n`);
+        console.log(`--- Getting stats for | ${repository} |\n`);
 
         // Get repo contributors
         const { data: contributors } = await octokit.repos.listContributors({
@@ -133,12 +135,17 @@ Apify.main(async () => {
         }
 
         // stats.push(repoStats);
-        await store.setValue(repository, repoStats)
+        await store.setValue(repository, repoStats);
+
+        // Get top 3 contributors in each repo
+        const mergedKeyStats = getTopContributors(repoStats);
+
+        topContributorsInRepo.push({
+            [repository]: mergedKeyStats
+        });
     }
 
-    // TODO
-    // sort the top 3 users from each repo by number of issues closed, PR reviews, and PRs created. Show additions/deletions just for fun
-    // return this in a dataset, or maybe it can be sent somewhere? But that can also be done by webhook
+    await Apify.pushData(topContributorsInRepo);
 
     console.log('Done!');
 });
