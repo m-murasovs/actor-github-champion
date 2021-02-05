@@ -21,7 +21,6 @@ const octokit = new Octokit({
 
 Apify.main(async () => {
     const { REPOSITORIES, REPOSITORY_OWNER, NUMBER_OF_WEEKS } = await Apify.getInput();
-    const store = await Apify.openKeyValueStore('detailed-repo-metrics');
     const topContributorsInRepo = [];
 
     const todaysDate = new Date();
@@ -134,8 +133,7 @@ Apify.main(async () => {
             }
         }
 
-        // stats.push(repoStats);
-        await store.setValue(repository, repoStats);
+        await Apify.setValue(repository, repoStats);
 
         // Get top 3 contributors in each repo
         const mergedKeyStats = getTopContributors(repoStats);

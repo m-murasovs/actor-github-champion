@@ -16,6 +16,7 @@
             "type": "array",
             "description": "A JSON array of repository names. E.g. [\"apify-docs\", \"apify-web\"]. If left blank, the actor will include all of the owner's repositories.",
             "editor": "json",
+            "prefill": null,
             "nullable": true
         },
         "NUMBER_OF_WEEKS": {

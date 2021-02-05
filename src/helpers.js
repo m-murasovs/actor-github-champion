@@ -1,6 +1,9 @@
 exports.getAllRepoNames = (allOrgRepos) => {
     const names = []
     allOrgRepos.map((repo) => names.push(repo.name));
+
+    console.log('Getting the owner\'s repositories');
+
     return names;
 }
 
