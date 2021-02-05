@@ -33,7 +33,9 @@ exports.filterPulls = (pulls, timePeriodStartDate, includeReleases) => pulls.fil
     const pullIsFromTimePeriod = new Date(pull.created_at) > timePeriodStartDate;
     const pullIsNotRelease = pull.base.ref !== 'master';
 
-    const shouldPullBeCounted = includeReleases ? pullIsFromTimePeriod && pullIsNotRelease : pullIsFromTimePeriod;
+    const shouldPullBeCounted = includeReleases ? pullIsFromTimePeriod : pullIsFromTimePeriod && pullIsNotRelease;
+
+    console.log(shouldPullBeCounted)
 
     return shouldPullBeCounted;
 });
