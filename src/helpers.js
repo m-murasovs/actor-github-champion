@@ -63,9 +63,13 @@ exports.getTopContributors = (repoStats) => {
     const topContributors = [];
     if (repoStats.length) {
         repoStats.map(({ id, pullReviews, issuesClosed, pullsCreated }) => {
+            // Pull reviews and closed issues count for 1 point, created pull requests count for half a point
+            const pullsCreatedScore = pullsCreated * 0.5;
+            console.log(pullsCreated, pullsCreatedScore)
+
             topContributors.push({
                 name: id,
-                total: (pullReviews + issuesClosed + pullsCreated),
+                total: (pullReviews + issuesClosed + pullsCreatedScore),
                 pullReviews,
                 issuesClosed,
                 pullsCreated
