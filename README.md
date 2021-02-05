@@ -1,51 +1,170 @@
 # GitHub Champion
 
-## What it will do
+Metrics aren't fun. What if they could be?
 
-The actor will go to the specified repositories and scrape information about who has done the most additions/deletions/commits, as well as closed the most issues and pull requests in a given time period. The person with the highest numbers is the winner - the repository's GitHub Champion.
+Celebrate your organization's unsung heroes, identify the unofficial contributors who make a difference, and find out who can dethrone the reigning champion.
 
-The actor will need login credentials with access to the repositories if they are private.
+Find out each of your repositories' top 3 contributors for your chosen tie period, measured by number of issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
 
-The actor should send a notification, if possible to Slack/somewhere else. Maybe this can be done via webhooks?
+Use Apify [schedules](https://docs.apify.com/schedules) to synchronize these reports with your company's sprints. Combine it with [webhooks](https://docs.apify.com/webhooks) and have the results sent to you right after they are gathered.
+
+Who is your organization's GitHub Champion?
 
 ## How to use
 
-You will need a GitHub API token with the **repo** thingy granted  - find it at <https://github.com/settings/tokens/new>
+To use this actor with private repositories, you will need a GitHub API token with the **repo** permission granted  - find it at <https://github.com/settings/tokens/new> and save it as an **environment variable** named `GITHUB_API_TOKEN`.
 
-You will need to make sure issues are assigned to the person who does them - (it's good Git practice anyway :) ), otherwise, they would be counted for the person that closes them, but that's not always who did the work.
+![Environment variable in app]({{@asset src/images/env_var.png}})
 
-## Inputs
+If you keep getting a `Not Found` error, it's probably to do with your authentication token. Make sure the entire `repo` permission is selected.
 
-- Repo(s) - startUrl, add as many as you want
-- Initial cookies (optional - only if you're scraping private repos)
-- [Time period](https://docs.github.com/en/github/searching-for-information-on-github/understanding-the-search-syntax)
-  - Options: this month, last month, date range (YYYY-MM-DD format)
-- Contributions - tick boxes
-  - Commits
-  - Additions
-  - Deletions
-  - Created PRs
-  - [Reviewed PRs](https://docs.github.com/en/github/searching-for-information-on-github/searching-issues-and-pull-requests#search-by-pull-request-review-status-and-reviewer)
-  - Closed issues
-- Ranking mode
-  - Only one champion
-  - Top 3
-- Output options:
-  - Just the champion/top 3
-  - A table with everyone's results, sorted by
+![API token settings]({{@asset src/images/token_permissions.png}})
 
-### Output
+For the pull request stats to work properly, the PR must not merge directly to the `master` branch, but instead to a `develop` branch. This is to avoid counting releases.
 
-For each repo, either one champion or the top 3, with their
+You will also need to make sure issues are **assigned** correctly (it's good practice anyway :)). One of the main metrics for the actor is the **number of issues closed** by each contributor.
 
-See "Output options" above
+## How it works
 
-# Blog notes
+The actor makes a few requests to GitHub's API to get your repositories' stats. It then crunches the data for each repo and each contributor, discards the empty entries, and returns the goods.
 
-Here at Apify, we like to have fun. We work to maintain a team spirit. When we go on a team building, we go hard.
+**Pull request reviews** and **closed issues** count for 1 point, **created pull requests** count for half a point. The score is added, and the person with the highest score wins!
 
-As the company grows, it's easy to lose track of your team. Of course, this actor isn't meant to replace interaction or team spirit, more to supplement it, to show you what your colleagues are up to. It will also help reveal the secret workhorses, the ones who review every pull request, write the most code, and don't always get the visibility they deserve because the thing they do isn't glamorous or something everyone can understand easily. At the very least, they will see that this person wrote a lot of code :D
+## What it doesn't do
 
-In the spirit of good team humor, we made this fun tool that creates a slightly humorous competition that isn't a competition for your team.
+This actor **doesn't count the number of additions, deletions, and commits** when it calculates the winner. Some of us commit everything, others like the one-commit-fits-all approach. Some of us do package updates, which amount to thousands of added and deleted lines.
 
-In these times of team separation, maybe even seeing how many lines of code your colleagues have added may help you feel closer to them. Add to that a bit of friendly competition, and it might help improve the vibe even more.
+## Input
+
+## Output
+
+The top 3 contributors from each repository are added to the `top-contributors.json` file in the `top-threes` [key-value store](https://docs.apify.com/storage/key-value-store).
+
+Sample top 3 array:
+
+```json
+[
+  {
+    "apify-web": [
+      {
+        "name": "fnesveda",
+        "total": 27,
+        "pullReviews": 11,
+        "issuesClosed": 12,
+        "pullsCreated": 8
+      },
+      {
+        "name": "m-murasovs",
+        "total": 18.5,
+        "pullReviews": 12,
+        "issuesClosed": 6,
+        "pullsCreated": 1
+      },
+      {
+        "name": "nguyeda1",
+        "total": 10,
+        "pullReviews": 10,
+        "issuesClosed": 0,
+        "pullsCreated": 0
+      }
+    ]
+  },
+  {
+    "apify-core": [
+      {
+        "name": "Strajk",
+        "total": 14.5,
+        "pullReviews": 10,
+        "issuesClosed": 0,
+        "pullsCreated": 9
+      },
+      {
+        "name": "gippy",
+        "total": 13,
+        "pullReviews": 4,
+        "issuesClosed": 7,
+        "pullsCreated": 4
+      },
+      {
+        "name": "valekjo",
+        "total": 6.5,
+        "pullReviews": 6,
+        "issuesClosed": 0,
+        "pullsCreated": 1
+      }
+    ]
+  }
+]
+```
+
+More detailed breakdowns of each repository are available in the `detailed-repo-metrics` key-value-store.
+
+Sample detailed breakdown:
+
+```json
+[
+  {
+    "id": "nguyeda1",
+    "additions": 0,
+    "deletions": 0,
+    "commits": 0,
+    "pullsCreated": 0,
+    "pullReviews": 10,
+    "issuesClosed": 0
+  },
+  {
+    "id": "jancurn",
+    "additions": 4,
+    "deletions": 2,
+    "commits": 1,
+    "pullsCreated": 1,
+    "pullReviews": 1,
+    "issuesClosed": 0
+  },
+  {
+    "id": "drobnikj",
+    "additions": 0,
+    "deletions": 0,
+    "commits": 0,
+    "pullsCreated": 0,
+    "pullReviews": 6,
+    "issuesClosed": 0
+  },
+  {
+    "id": "m-murasovs",
+    "additions": 123,
+    "deletions": 54,
+    "commits": 2,
+    "pullsCreated": 1,
+    "pullReviews": 12,
+    "issuesClosed": 6
+  },
+  {
+    "id": "mtrunkat",
+    "additions": 0,
+    "deletions": 0,
+    "commits": 0,
+    "pullsCreated": 0,
+    "pullReviews": 5,
+    "issuesClosed": 1
+  },
+  {
+    "id": "fnesveda",
+    "additions": 15652,
+    "deletions": 16589,
+    "commits": 13,
+    "pullsCreated": 8,
+    "pullReviews": 11,
+    "issuesClosed": 12
+  },
+  {
+    "id": "dragonraid",
+    "additions": 17,
+    "deletions": 4,
+    "commits": 1,
+    "pullsCreated": 1,
+    "pullReviews": 0,
+    "issuesClosed": 0
+  }
+]
+```
