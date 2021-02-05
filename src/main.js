@@ -23,6 +23,9 @@ Apify.main(async () => {
     const { REPOSITORIES, REPOSITORY_OWNER, NUMBER_OF_WEEKS } = await Apify.getInput();
     const topContributorsInRepo = [];
 
+    const detailedMetrics = await Apify.openKeyValueStore('detailed-repo-metrics');
+    const topThrees = await Apify.openKeyValueStore('top-threes');
+
     const todaysDate = new Date();
     const numberOfDays = NUMBER_OF_WEEKS * 7;
     const timePeriodStartDate = new Date(
@@ -133,7 +136,7 @@ Apify.main(async () => {
             }
         }
 
-        await Apify.setValue(repository, repoStats);
+        await detailedMetrics.setValue(repository, repoStats);
 
         // Get top 3 contributors in each repo
         const mergedKeyStats = getTopContributors(repoStats);
@@ -143,7 +146,7 @@ Apify.main(async () => {
         });
     }
 
-    await Apify.pushData(topContributorsInRepo);
+    await topThrees.setValue('top-contributors', topContributorsInRepo);
 
     console.log('Done!');
 });
