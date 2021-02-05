@@ -20,7 +20,7 @@ const octokit = new Octokit({
 });
 
 Apify.main(async () => {
-    const { REPOSITORIES, REPOSITORY_OWNER, NUMBER_OF_WEEKS } = await Apify.getInput();
+    const { REPOSITORIES, REPOSITORY_OWNER, NUMBER_OF_WEEKS, INCLUDE_RELEASES } = await Apify.getInput();
     const topContributorsInRepo = [];
 
     const detailedMetrics = await Apify.openKeyValueStore('detailed-repo-metrics');
@@ -68,7 +68,7 @@ Apify.main(async () => {
             state: 'all',
         });
 
-        const filteredPulls = await filterPulls(pulls, timePeriodStartDate);
+        const filteredPulls = await filterPulls(pulls, timePeriodStartDate, INCLUDE_RELEASES);
 
         // Get reviews for each pull
         const pullReviews = [];

@@ -20,7 +20,7 @@ If you keep getting a `Not Found` error, it's probably to do with your authentic
 
 ![API token settings]({{@asset src/images/token_permissions.png}})
 
-For the pull request stats to work properly, the PR must not merge directly to the `master` branch, but instead to a `develop` branch. This is to avoid counting releases.
+By default, PRs agains the `master` branch are not counted to avoid counting releases. If your repository doesn't have a `develop` branch, enable this option.
 
 You will also need to make sure issues are **assigned** correctly (it's good practice anyway :)). One of the main metrics for the actor is the **number of issues closed** by each contributor.
 

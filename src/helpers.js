@@ -29,11 +29,13 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
     return result;
 };
 
-exports.filterPulls = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
+exports.filterPulls = (pulls, timePeriodStartDate, includeReleases) => pulls.filter((pull) => {
     const pullIsFromTimePeriod = new Date(pull.created_at) > timePeriodStartDate;
     const pullIsNotRelease = pull.base.ref !== 'master';
 
-    return pullIsFromTimePeriod && pullIsNotRelease;
+    const shouldPullBeCounted = includeReleases ? pullIsFromTimePeriod && pullIsNotRelease : pullIsFromTimePeriod;
+
+    return shouldPullBeCounted;
 });
 
 exports.getUserPullReviews = (pullReviews, userLogin) => {

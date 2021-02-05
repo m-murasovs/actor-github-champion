@@ -25,6 +25,13 @@
             "description": "The number of weeks, from the day of the actor's run, to monitor. E.g. If you would like to monitor the activity from the past 4 weeks, enter 4. Defaults to 2.",
             "default": 2,
             "editor": "number"
+        },
+        "INCLUDE_RELEASES": {
+            "title": "Include releases",
+            "type": "boolean",
+            "description": "Select for repositories that merge directly to the master branch. Releases are excluded by default, to avoid boosting some users' number of pull requests.",
+            "default": false,
+            "editor": "checkbox"
         }
     },
     "required": [
