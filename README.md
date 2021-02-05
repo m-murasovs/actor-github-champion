@@ -2,9 +2,9 @@
 
 Metrics aren't fun. What if they could be?
 
-Celebrate your organization's unsung heroes, identify the unofficial contributors who make a difference, and find out who can dethrone the reigning champion.
+Celebrate your organization's unsung heroes, identify the quiet contributors who make a difference, and see who will dethrone the reigning champion.
 
-Find out each of your repositories' top 3 contributors for your chosen tie period, measured by number of issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
+Find out each of your repositories' top 3 contributors for your chosen time period, measured by number of issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
 
 Use Apify [schedules](https://docs.apify.com/schedules) to synchronize these reports with your company's sprints. Combine it with [webhooks](https://docs.apify.com/webhooks) and have the results sent to you right after they are gathered.
 
@@ -32,7 +32,7 @@ The actor makes a few requests to GitHub's API to get your repositories' stats. 
 
 ## What it doesn't do
 
-This actor **doesn't count the number of additions, deletions, and commits** when it calculates the winner. Some of us commit everything, others like the one-commit-fits-all approach. Some of us do package updates, which amount to thousands of added and deleted lines.
+This actor **doesn't include the number of additions, deletions, and commits** in its calculation. Some of us commit everything, others like to bundle it all into one. Some of us do package updates, which amount to thousands of added and deleted lines.
 
 ## Input
 
