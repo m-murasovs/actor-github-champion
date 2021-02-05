@@ -35,8 +35,6 @@ exports.filterPulls = (pulls, timePeriodStartDate, includeReleases) => pulls.fil
 
     const shouldPullBeCounted = includeReleases ? pullIsFromTimePeriod : pullIsFromTimePeriod && pullIsNotRelease;
 
-    console.log(shouldPullBeCounted)
-
     return shouldPullBeCounted;
 });
 
