@@ -4,7 +4,7 @@ Metrics aren't fun. What if they could be?
 
 Celebrate your organization's unsung heroes, identify the quiet contributors who make a difference, and see who will dethrone the reigning champion.
 
-Find out each of your repositories' top 3 contributors for your chosen time period, measured by number of issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
+Find out each of your repositories' top 3 contributors for your chosen time period, measured by number of assigned issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
 
 Use Apify [schedules](https://docs.apify.com/schedules) to synchronize these reports with your company's sprints. Combine it with [webhooks](https://docs.apify.com/webhooks) and have the results sent to you right after they are gathered.
 
@@ -43,21 +43,21 @@ Sample top 3 array:
   {
     "apify-web": [
       {
-        "name": "fnesveda",
+        "name": "gandalf",
         "total": 27,
         "pullReviews": 11,
         "issuesClosed": 12,
         "pullsCreated": 8
       },
       {
-        "name": "m-murasovs",
+        "name": "frodo",
         "total": 18.5,
         "pullReviews": 12,
         "issuesClosed": 6,
         "pullsCreated": 1
       },
       {
-        "name": "nguyeda1",
+        "name": "former-champ",
         "total": 10,
         "pullReviews": 10,
         "issuesClosed": 0,
@@ -68,21 +68,21 @@ Sample top 3 array:
   {
     "apify-core": [
       {
-        "name": "Strajk",
+        "name": "winner",
         "total": 14.5,
         "pullReviews": 10,
         "issuesClosed": 0,
         "pullsCreated": 9
       },
       {
-        "name": "gippy",
+        "name": "hello-user",
         "total": 13,
         "pullReviews": 4,
         "issuesClosed": 7,
         "pullsCreated": 4
       },
       {
-        "name": "valekjo",
+        "name": "future-champ",
         "total": 6.5,
         "pullReviews": 6,
         "issuesClosed": 0,
@@ -100,7 +100,7 @@ Sample detailed breakdown:
 ```json
 [
   {
-    "id": "nguyeda1",
+    "id": "former-champ",
     "additions": 0,
     "deletions": 0,
     "commits": 0,
@@ -109,7 +109,7 @@ Sample detailed breakdown:
     "issuesClosed": 0
   },
   {
-    "id": "jancurn",
+    "id": "team-leader",
     "additions": 4,
     "deletions": 2,
     "commits": 1,
@@ -118,7 +118,7 @@ Sample detailed breakdown:
     "issuesClosed": 0
   },
   {
-    "id": "drobnikj",
+    "id": "cto",
     "additions": 0,
     "deletions": 0,
     "commits": 0,
@@ -127,7 +127,7 @@ Sample detailed breakdown:
     "issuesClosed": 0
   },
   {
-    "id": "m-murasovs",
+    "id": "frodo",
     "additions": 123,
     "deletions": 54,
     "commits": 2,
@@ -136,7 +136,7 @@ Sample detailed breakdown:
     "issuesClosed": 6
   },
   {
-    "id": "mtrunkat",
+    "id": "casual-contributor",
     "additions": 0,
     "deletions": 0,
     "commits": 0,
@@ -145,7 +145,7 @@ Sample detailed breakdown:
     "issuesClosed": 1
   },
   {
-    "id": "fnesveda",
+    "id": "gandalf",
     "additions": 15652,
     "deletions": 16589,
     "commits": 13,
@@ -154,7 +154,7 @@ Sample detailed breakdown:
     "issuesClosed": 12
   },
   {
-    "id": "dragonraid",
+    "id": "samwise",
     "additions": 17,
     "deletions": 4,
     "commits": 1,
