@@ -4,14 +4,21 @@
     "type": "object",
     "schemaVersion": 1,
     "properties": {
-        "REPOSITORY_OWNER": {
+        "githubApiToken": {
+            "title": "Github API token",
+            "type": "string",
+            "description": "To use this actor with private repositories, you will need a GitHub API token with the **repo** permission granted  - create it at https://github.com/settings/tokens/new",
+            "editor": "textfield",
+            "nullable": true
+        },
+        "repositoryOwner": {
             "title": "Repository owner",
             "type": "string",
             "description": "The owner's or organization's name. E.g. \"apify\"",
             "editor": "textfield",
             "prefill": "apify"
         },
-        "REPOSITORIES": {
+        "repositories": {
             "title": "Repositories",
             "type": "array",
             "description": "A JSON array of repository names. E.g. [\"apify-docs\", \"apify-web\"]. If left blank, the actor will include all of the owner's repositories.",
@@ -19,14 +26,14 @@
             "prefill": [],
             "nullable": true
         },
-        "NUMBER_OF_WEEKS": {
+        "numberOfWeeks": {
             "title": "Number of weeks",
             "type": "integer",
             "description": "The number of weeks, from the day of the actor's run, to monitor. E.g. If you would like to monitor the activity from the past 4 weeks, enter 4. Defaults to 2.",
             "default": 2,
             "editor": "number"
         },
-        "INCLUDE_RELEASES": {
+        "includeReleases": {
             "title": "Include releases",
             "type": "boolean",
             "description": "Select for repositories that merge directly to the master branch. Releases are excluded by default, to avoid boosting some users' number of pull requests.",

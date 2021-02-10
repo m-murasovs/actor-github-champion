@@ -13,36 +13,37 @@ const {
 
 const { utils: { log } } = Apify;
 
-const octokit = new Octokit({
-    auth: process.env.GITHUB_API_TOKEN,
-    state: 'all',
-    userAgent: 'GitHub Champion v0.0.1',
-});
 
 Apify.main(async () => {
-    const { REPOSITORIES, REPOSITORY_OWNER, NUMBER_OF_WEEKS, INCLUDE_RELEASES } = await Apify.getInput();
+    const { repositories, repositoryOwner, numberOfWeeks, includeReleases, githubApiToken } = await Apify.getInput();
     const topContributorsInRepo = [];
+
+    const octokit = new Octokit({
+        auth: githubApiToken,
+        state: 'all',
+        userAgent: 'GitHub Champion v0.0.1',
+    });
 
     const detailedMetrics = await Apify.openKeyValueStore('detailed-repo-metrics');
     const topThrees = await Apify.openKeyValueStore('top-threes');
 
     const todaysDate = new Date();
-    const numberOfDays = NUMBER_OF_WEEKS * 7;
+    const numberOfDays = numberOfWeeks * 7;
     const timePeriodStartDate = new Date(
         todaysDate.getFullYear(),
         todaysDate.getMonth(),
         (todaysDate.getDate() - numberOfDays),
     );
 
-    // If REPOSITORIES is empty, iterate through all of the owner's repos
+    // If repositories is empty, iterate through all of the owner's repos
     let allRepos = '';
-    if (!REPOSITORIES) {
+    if (!repositories) {
         allRepos = await octokit.teams.listReposInOrg({
-            org: REPOSITORY_OWNER,
+            org: repositoryOwner,
             team_slug: 'platform-team',
         });
     }
-    const allRepoNames = REPOSITORIES || getAllRepoNames(allRepos.data);
+    const allRepoNames = repositories || getAllRepoNames(allRepos.data);
 
     for (const repository of allRepoNames) {
         const repoStats = [];
@@ -51,24 +52,24 @@ Apify.main(async () => {
 
         // Get repo contributors
         const { data: contributors } = await octokit.repos.listContributors({
-            owner: REPOSITORY_OWNER,
+            owner: repositoryOwner,
             repo: repository,
         });
 
         // Get repo contributions
         const { data: contributions } = await octokit.repos.getContributorsStats({
-            owner: REPOSITORY_OWNER,
+            owner: repositoryOwner,
             repo: repository,
         });
 
         // Get repo pull requests
         const { data: pulls } = await octokit.pulls.list({
-            owner: REPOSITORY_OWNER,
+            owner: repositoryOwner,
             repo: repository,
             state: 'all',
         });
 
-        const filteredPulls = await filterPulls(pulls, timePeriodStartDate, INCLUDE_RELEASES);
+        const filteredPulls = await filterPulls(pulls, timePeriodStartDate, includeReleases);
 
         // Get reviews for each pull
         const pullReviews = [];
@@ -76,7 +77,7 @@ Apify.main(async () => {
             const { data: reviews } = await octokit.request(
                 'GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews',
                 {
-                    owner: REPOSITORY_OWNER,
+                    owner: repositoryOwner,
                     repo: repository,
                     pull_number: pull.number,
                 },
@@ -84,13 +85,17 @@ Apify.main(async () => {
             pullReviews.push({
                 [pull.number]: reviews,
             });
+
+            await Apify.utils.sleep(100);
         }
+
+        await Apify.utils.sleep(100);
 
         // Get repo closed issues from time period
         const { data: issues } = await octokit.request(
             'GET /repos/{owner}/{repo}/issues?state={issue_state}&since={updated_since}',
             {
-                owner: REPOSITORY_OWNER,
+                owner: repositoryOwner,
                 repo: repository,
                 issue_state: 'closed',
                 updated_since: timePeriodStartDate.toISOString(),
@@ -104,7 +109,7 @@ Apify.main(async () => {
             };
 
             // Get user's contributions to repo from the last X number of weeks
-            const userContributions = mergeContributions(contributions, user, NUMBER_OF_WEEKS);
+            const userContributions = mergeContributions(contributions, user, numberOfWeeks);
 
             for (const [key, value] of Object.entries(userContributions)) {
                 switch (key) {
@@ -144,6 +149,8 @@ Apify.main(async () => {
         topContributorsInRepo.push({
             [repository]: mergedKeyStats
         });
+
+        await Apify.utils.sleep(100);
     }
 
     await topThrees.setValue('top-contributors', topContributorsInRepo);

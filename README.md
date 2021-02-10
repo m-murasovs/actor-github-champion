@@ -12,9 +12,7 @@ Who is your organization's GitHub Champion?
 
 ## How to use
 
-To use this actor with private repositories, you will need a GitHub API token with the **repo** permission granted  - find it at <https://github.com/settings/tokens/new> and save it as an **environment variable** named `GITHUB_API_TOKEN`.
-
-![Environment variable in app](src/images/env_var.png)
+To use this actor with private repositories, you will need a GitHub API token with the **repo** permission granted  - create it at <https://github.com/settings/tokens/new> and paste it into the **githubApiToken** input.
 
 If you keep getting a `Not Found` error, it's probably to do with your authentication token. Make sure the entire `repo` permission is selected.
 
@@ -33,8 +31,6 @@ The actor makes a few requests to GitHub's API to get your repositories' stats. 
 ## What it doesn't do
 
 This actor **doesn't include the number of additions, deletions, and commits** in its calculation. Some of us commit everything, others like to bundle it all into one. Some of us do package updates, which amount to thousands of added and deleted lines.
-
-## Input
 
 ## Output
 
