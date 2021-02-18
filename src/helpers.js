@@ -30,6 +30,7 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
 };
 
 exports.filterPulls = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
+    console.log(pull.number, pull.created_at)
     const pullIsFromTimePeriod = new Date(pull.created_at) > timePeriodStartDate;
     const pullIsRelease = pull.title.toLowerCase().includes('release') && pull.base.ref === 'master';
 

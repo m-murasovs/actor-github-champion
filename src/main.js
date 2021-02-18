@@ -64,13 +64,22 @@ Apify.main(async () => {
         });
 
         // Get repo pull requests
-        const { data: pulls } = await octokit.pulls.list({
-            owner: repositoryOwner,
-            repo: repository,
-            state: 'all',
-        });
-
-        const filteredPulls = await filterPulls(pulls, timePeriodStartDate);
+        const getPulls = async (pageNumber) => {
+            const pulls = await await octokit.pulls.list({
+                owner: repositoryOwner,
+                repo: repository,
+                state: 'all',
+                per_page: 100,
+                page: pageNumber,
+                since: timePeriodStartDate.toISOString(),
+            });
+            await Apify.utils.sleep(50);
+            return pulls;
+        }
+        const { data: pullsPageOne } = await getPulls(1);
+        const { data: pullsPageTwo } = await getPulls(2);
+        const pulls = pullsPageOne.concat(pullsPageTwo)
+        const filteredPulls = await filterPulls(Object.values(pulls), timePeriodStartDate);
 
         // Get reviews for each pull
         const pullReviews = [];
@@ -105,6 +114,7 @@ Apify.main(async () => {
                     closed_since: timePeriodStartDate.toISOString(),
                 },
             );
+            await Apify.utils.sleep(50);
             return issues;
         }
         // Get the first 4 pages
@@ -163,11 +173,11 @@ Apify.main(async () => {
 
     const topContributorsInOrg = getTopContributorsInOrg(allContributorsInfoInOrg);
 
-    await topThrees.setValue('top-contributors-repos', topContributorsInRepo);
     await topThrees.setValue('top-contributors-org', topContributorsInOrg);
+    await topThrees.setValue('top-contributors-repos', topContributorsInRepo);
     // Add also to the default dataset so users can check results right away
-    await Apify.pushData(topContributorsInRepo);
     await Apify.pushData(topContributorsInOrg);
+    await Apify.pushData(topContributorsInRepo);
 
     console.log('Done!');
 });
