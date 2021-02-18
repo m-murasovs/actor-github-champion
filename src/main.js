@@ -163,9 +163,9 @@ Apify.main(async () => {
 
     const topContributorsInOrg = getTopContributorsInOrg(allContributorsInfoInOrg);
 
-    await topThrees.setValue('top-contributors', topContributorsInOrg);
+    await topThrees.setValue('top-contributors-repos', topContributorsInRepo);
+    await topThrees.setValue('top-contributors-org', topContributorsInOrg);
     // Add also to the default dataset so users can check results right away
-    console.log()
     await Apify.pushData(topContributorsInRepo);
     await Apify.pushData(topContributorsInOrg);
 
