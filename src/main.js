@@ -8,15 +8,15 @@ const {
     getUserPullReviews,
     hasContributions,
     getAllRepoNames,
-    getTopContributors
+    getTopContributors,
+    getTopContributorsInOrg
 } = require('./helpers.js');
-
-const { utils: { log } } = Apify;
 
 
 Apify.main(async () => {
     const { repositories, repositoryOwner, numberOfWeeks, includeReleases, githubApiToken } = await Apify.getInput();
     const topContributorsInRepo = [];
+    const allContributorsInfoInOrg = [];
 
     const octokit = new Octokit({
         auth: githubApiToken,
@@ -141,20 +141,25 @@ Apify.main(async () => {
             }
         }
 
+        // Push the stats for organization-wide analysis
+        allContributorsInfoInOrg.push(repoStats);
+        // Store detailed metrics for each repo
         await detailedMetrics.setValue(repository, repoStats);
-
         // Get top 3 contributors in each repo
         const mergedKeyStats = getTopContributors(repoStats);
-
         topContributorsInRepo.push({
             [repository]: mergedKeyStats
         });
-
+        // Sleep to avoid pushing rate limits
         await Apify.utils.sleep(100);
     }
 
-    await topThrees.setValue('top-contributors', topContributorsInRepo);
+    const topContributorsInOrg = getTopContributorsInOrg(allContributorsInfoInOrg);
+
+    await topThrees.setValue('top-contributors', topContributorsInOrg);
     // Add also to the default dataset so users can check results right away
+    console.log()
+    await Apify.pushData(topContributorsInOrg);
     await Apify.pushData(topContributorsInRepo);
 
     console.log('Done!');

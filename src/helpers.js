@@ -82,3 +82,39 @@ exports.getTopContributors = (repoStats) => {
 
     return topContributors.slice(0, 3);
 }
+
+exports.getTopContributorsInOrg = (allContributions) => {
+    const allContributorInfoInAllRepos = [];
+
+    allContributions.map(organization => {
+        organization.map(contributor => {
+            allContributorInfoInAllRepos.push(contributor);
+        })
+    })
+
+    mergedRepoStats = {};
+    allContributorInfoInAllRepos.map(contributor => {
+        if (mergedRepoStats[contributor.id]) {
+            for (let [key, value] of Object.entries(contributor)) {
+                if (mergedRepoStats[contributor.id][key] && key !== 'id') {
+                    mergedRepoStats[contributor.id][key] += value;
+                } else if (!mergedRepoStats[contributor.id][key]) {
+                    mergedRepoStats[contributor.id][key] = value;
+                }
+            }
+        } else if (!mergedRepoStats[contributor.id]) {
+            mergedRepoStats[contributor.id] = contributor;
+        }
+    })
+
+    const mergedContributorStats = [];
+    for (const value of Object.values(mergedRepoStats)) {
+        mergedContributorStats.push(value);
+    }
+
+    const topContributors = this.getTopContributors(mergedContributorStats);
+
+    topContributors.sort((a, b) => b.total - a.total);
+
+    return { 'Organization All-stars': topContributors.slice(0, 3) };
+}
