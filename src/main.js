@@ -14,7 +14,7 @@ const {
 
 
 Apify.main(async () => {
-    const { repositories, repositoryOwner, numberOfWeeks, includeReleases, githubApiToken } = await Apify.getInput();
+    const { repositories, repositoryOwner, numberOfWeeks, githubApiToken } = await Apify.getInput();
     const topContributorsInRepo = [];
     const allContributorsInfoInOrg = [];
 
@@ -69,7 +69,7 @@ Apify.main(async () => {
             state: 'all',
         });
 
-        const filteredPulls = await filterPulls(pulls, timePeriodStartDate, includeReleases);
+        const filteredPulls = await filterPulls(pulls, timePeriodStartDate);
 
         // Get reviews for each pull
         const pullReviews = [];
@@ -128,7 +128,11 @@ Apify.main(async () => {
 
             // Get user issues closed
             const issuesClosedByUser = issues.filter((issue) => {
-                if (issue.assignee && issue.assignee.login === user.login) {
+                if (
+                    issue.assignee
+                    && issue.assignee.login === user.login
+                    && !issue.pull_request
+                ) {
                     return issue;
                 }
             });

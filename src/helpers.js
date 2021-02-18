@@ -29,13 +29,13 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
     return result;
 };
 
-exports.filterPulls = (pulls, timePeriodStartDate, includeReleases) => pulls.filter((pull) => {
+exports.filterPulls = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
     const pullIsFromTimePeriod = new Date(pull.created_at) > timePeriodStartDate;
-    const pullIsNotRelease = pull.base.ref !== 'master';
+    const pullIsRelease = pull.title.toLowerCase().includes('release') && pull.base.ref === 'master';
 
-    const shouldPullBeCounted = includeReleases ? pullIsFromTimePeriod : pullIsFromTimePeriod && pullIsNotRelease;
-
-    return shouldPullBeCounted;
+    if (pullIsFromTimePeriod && !pullIsRelease) {
+        return pull;
+    }
 });
 
 exports.getUserPullReviews = (pullReviews, userLogin) => {
@@ -44,7 +44,10 @@ exports.getUserPullReviews = (pullReviews, userLogin) => {
         Object.values(pull).map((reviewArray) => {
             if (reviewArray.length) {
                 reviewArray.map((review) => {
-                    if (review.user.login === userLogin) {
+                    if (
+                        review.user.login === userLogin
+                        && (review.state === 'APPROVED' || review.state === 'CHANGES_REQUESTED')
+                    ) {
                         count += 1;
                     }
                 });

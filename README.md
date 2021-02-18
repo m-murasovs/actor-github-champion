@@ -4,7 +4,7 @@ Metrics aren't fun. What if they could be?
 
 Celebrate your organization's unsung heroes, identify the quiet contributors who make a difference, and see who will dethrone the reigning champion.
 
-Find out each of your repositories' top 3 contributors for your chosen time period, measured by number of assigned issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
+Find the top 3 contributors from your organization and each of your repositories for your chosen time period. The winners are decided by number of assigned issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
 
 Use Apify [schedules](https://docs.apify.com/schedules) to synchronize these reports with your company's sprints. Combine it with [webhooks](https://docs.apify.com/webhooks) and have the results sent to you right after they are gathered.
 
@@ -18,7 +18,7 @@ If you keep getting a `Not Found` error, it's probably to do with your authentic
 
 ![API token settings](src/images/token_permissions.png)
 
-By default, PRs agains the `master` branch are not counted to avoid counting releases. If your repository doesn't have a `develop` branch, enable this option.
+By default, releases are not counted.
 
 You will also need to make sure issues are **assigned** correctly (it's good practice anyway :)). One of the main metrics for the actor is the **number of issues closed** by each contributor.
 
@@ -40,6 +40,31 @@ Sample top 3 array:
 
 ```json
 [
+  {
+    "Organization All-stars": [
+      {
+        "name": "gandalf",
+        "total": 26.5,
+        "pullReviews": 25,
+        "issuesClosed": 0,
+        "pullsCreated": 3
+      },
+      {
+        "name": "samwise",
+        "total": 24.5,
+        "pullReviews": 16,
+        "issuesClosed": 5,
+        "pullsCreated": 7
+      },
+      {
+        "name": "frodo",
+        "total": 20,
+        "pullReviews": 16,
+        "issuesClosed": 1,
+        "pullsCreated": 6
+      }
+    ]
+  },
   {
     "apify-web": [
       {
