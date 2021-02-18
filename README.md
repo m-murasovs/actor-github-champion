@@ -26,7 +26,7 @@ You will also need to make sure issues are **assigned** correctly (it's good pra
 
 The actor makes a few requests to GitHub's API to get your repositories' stats. It then crunches the data for each repo and each contributor, discards the empty entries, and returns the goods.
 
-**Pull request reviews** and **closed issues** count for 1 point, **created pull requests** count for half a point. The score is added, and the person with the highest score wins!
+**Closed issues** count for 1 point, **pull request reviews** count for 0.75 pints,  while **created pull requests** count for half a point. The score is added, and the person with the highest score wins!
 
 ## What it doesn't do
 
@@ -44,9 +44,9 @@ Sample top 3 array:
     "Organization All-stars": [
       {
         "name": "gandalf",
-        "total": 26.5,
+        "total": 29.5,
         "pullReviews": 25,
-        "issuesClosed": 0,
+        "issuesClosed": 3,
         "pullsCreated": 3
       },
       {

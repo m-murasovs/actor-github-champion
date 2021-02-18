@@ -30,7 +30,6 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
 };
 
 exports.filterPulls = (pulls, timePeriodStartDate) => pulls.filter((pull) => {
-    console.log(pull.number, pull.created_at)
     const pullIsFromTimePeriod = new Date(pull.created_at) > timePeriodStartDate;
     const pullIsRelease = pull.title.toLowerCase().includes('release') && pull.base.ref === 'master';
 
@@ -71,10 +70,11 @@ exports.getTopContributors = (repoStats) => {
         repoStats.map(({ id, pullReviews, issuesClosed, pullsCreated }) => {
             // Pull reviews and closed issues count for 1 point, created pull requests count for half a point
             const pullsCreatedScore = pullsCreated * 0.5;
+            const pullReviewsScore = pullReviews * 0.75;
 
             topContributors.push({
                 name: id,
-                total: (pullReviews + issuesClosed + pullsCreatedScore),
+                total: (pullReviewsScore + issuesClosed + pullsCreatedScore),
                 pullReviews,
                 issuesClosed,
                 pullsCreated
