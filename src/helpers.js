@@ -121,3 +121,31 @@ exports.getTopContributorsInOrg = (allContributions) => {
 
     return { 'Organization All-stars': topContributors.slice(0, 3) };
 }
+
+exports.filterIssuesClosedByUser = (issues, user) => {
+    let count = 0;
+
+    const assigneesIncludesUser = (issue, user) => {
+        if (issue.assignees.some(assignee => assignee.login === user.login)) {
+            return true;
+        }
+    };
+
+    issues.filter((issue) => {
+        if (
+            issue.assignee
+            && !issue.pull_request
+            && (issue.assignee.login === user.login)
+        ) {
+            count++;
+        } else if (
+            issue.assignees
+            && !issue.pull_request
+            && assigneesIncludesUser(issue, user)
+        ) {
+            count++
+        };
+    });
+
+    return count;
+}

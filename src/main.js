@@ -9,7 +9,8 @@ const {
     hasContributions,
     getAllRepoNames,
     getTopContributors,
-    getTopContributorsInOrg
+    getTopContributorsInOrg,
+    filterIssuesClosedByUser
 } = require('./helpers.js');
 
 
@@ -92,15 +93,26 @@ Apify.main(async () => {
         await Apify.utils.sleep(100);
 
         // Get repo closed issues from time period
-        const { data: issues } = await octokit.request(
-            'GET /repos/{owner}/{repo}/issues?state={issue_state}&since={updated_since}',
-            {
-                owner: repositoryOwner,
-                repo: repository,
-                issue_state: 'closed',
-                updated_since: timePeriodStartDate.toISOString(),
-            },
-        );
+        const getIssues = async (pageNumber) => {
+            const issues = await octokit.request(
+                'GET /repos/{owner}/{repo}/issues?state={issue_state}&per_page={per_page}&page={page}&since={closed_since}',
+                {
+                    owner: repositoryOwner,
+                    repo: repository,
+                    issue_state: 'closed',
+                    page: pageNumber,
+                    per_page: 100,
+                    closed_since: timePeriodStartDate.toISOString(),
+                },
+            );
+            return issues;
+        }
+        // Get the first 4 pages
+        const { data: issuesPageOne } = await getIssues(1);
+        const { data: issuesPageTwo } = await getIssues(2);
+        const { data: issuesPageThree } = await getIssues(3);
+        const { data: issuesPageFour } = await getIssues(4);
+        const issues = issuesPageOne.concat(issuesPageTwo, issuesPageThree, issuesPageFour);
 
         // Build up the user data for each repository
         for (const user of contributors) {
@@ -127,16 +139,7 @@ Apify.main(async () => {
             userEntry.pullReviews = getUserPullReviews(pullReviews, user.login);
 
             // Get user issues closed
-            const issuesClosedByUser = issues.filter((issue) => {
-                if (
-                    issue.assignee
-                    && issue.assignee.login === user.login
-                    && !issue.pull_request
-                ) {
-                    return issue;
-                }
-            });
-            userEntry.issuesClosed = issuesClosedByUser.length;
+            userEntry.issuesClosed = filterIssuesClosedByUser(Object.values(issues), user);
 
             // Store the user's entry if not empty
             if (hasContributions(userEntry)) {
