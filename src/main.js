@@ -15,7 +15,7 @@ const {
 
 
 Apify.main(async () => {
-    const { repositories, repositoryOwner, numberOfWeeks, githubApiToken } = await Apify.getInput();
+    const { repositories, repositoryOwner, numberOfWeeks, githubApiToken, accountType } = await Apify.getInput();
     const topContributorsInRepo = [];
     const allContributorsInfoInOrg = [];
 
@@ -37,14 +37,35 @@ Apify.main(async () => {
     );
 
     // If repositories is empty, iterate through all of the owner's repos
-    let allRepos = '';
+    // Handling for independent users and organizations
+    let allRepos = [];
     if (!repositories) {
-        allRepos = await octokit.teams.listReposInOrg({
-            org: repositoryOwner,
-            team_slug: 'platform-team',
-        });
+        if (accountType === "user") {
+            allRepos = await octokit.repos.listForUser({
+                username: repositoryOwner,
+            });
+        } else if (accountType === "organization") {
+            const { data: teamsInOrg } = await octokit.teams.list({
+                org: repositoryOwner,
+            });
+            if (teamsInOrg) {
+                for (const team of teamsInOrg) {
+                    const { data: teamRepos } = await octokit.teams.listReposInOrg({
+                        org: repositoryOwner,
+                        team_slug: team.slug,
+                    });
+                    teamRepos.map(repo => allRepos.push(repo))
+                }
+            } else {
+                allRepos = await octokit.orgs.listReposInOrg({
+                    org: repositoryOwner,
+                });
+            }
+        }
     }
-    const allRepoNames = repositories || getAllRepoNames(allRepos.data);
+
+    const allRepoNames = repositories || getAllRepoNames(allRepos);
+
 
     for (const repository of allRepoNames) {
         const repoStats = [];

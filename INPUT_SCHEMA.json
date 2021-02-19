@@ -18,6 +18,21 @@
             "editor": "textfield",
             "prefill": "apify"
         },
+        "accountType": {
+            "title": "Type of account",
+            "type": "string",
+            "description": "Organization or user. For users, only public repositories an be listed.",
+            "default": "organization",
+            "editor": "select",
+            "enum": [
+                "organization",
+                "user"
+            ],
+            "enumTitles": [
+                "Organization",
+                "User"
+            ]
+        },
         "repositories": {
             "title": "Repositories",
             "type": "array",
