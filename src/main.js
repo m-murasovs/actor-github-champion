@@ -181,14 +181,12 @@ Apify.main(async () => {
         }
 
         // Push the stats for organization-wide analysis
-        allContributorsInfoInOrg.push(repoStats);
+        if (repoStats.length) allContributorsInfoInOrg.push(repoStats);
         // Store detailed metrics for each repo
         await detailedMetrics.setValue(repository, repoStats);
         // Get top 3 contributors in each repo
         const mergedKeyStats = getTopContributors(repoStats);
-        topContributorsInRepo.push({
-            [repository]: mergedKeyStats
-        });
+        if (mergedKeyStats.length) topContributorsInRepo.push({ [repository]: mergedKeyStats });
         // Sleep to avoid pushing rate limits
         await Apify.utils.sleep(100);
     }
