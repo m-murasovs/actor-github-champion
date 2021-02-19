@@ -41,9 +41,10 @@ Apify.main(async () => {
     let allRepos = [];
     if (!repositories) {
         if (accountType === "user") {
-            allRepos = await octokit.repos.listForUser({
+            userRepos = await octokit.repos.listForUser({
                 username: repositoryOwner,
             });
+            allRepos = userRepos.data;
         } else if (accountType === "organization") {
             const { data: teamsInOrg } = await octokit.teams.list({
                 org: repositoryOwner,
@@ -195,7 +196,7 @@ Apify.main(async () => {
     const topContributorsInOrg = getTopContributorsInOrg(allContributorsInfoInOrg);
 
     await topThrees.setValue('top-contributors-org', topContributorsInOrg);
-    await topThrees.setValue('top-contributors-repos', topContributorsInRepo);
+    if (topContributorsInRepo.length) await topThrees.setValue('top-contributors-repos', topContributorsInRepo);
     // Add also to the default dataset so users can check results right away
     await Apify.pushData(topContributorsInOrg);
     await Apify.pushData(topContributorsInRepo);
