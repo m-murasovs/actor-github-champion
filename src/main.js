@@ -40,12 +40,12 @@ Apify.main(async () => {
     // Handling for independent users and organizations
     let allRepos = [];
     if (!repositories) {
-        if (accountType === "user") {
+        if (accountType === "public") {
             userRepos = await octokit.repos.listForUser({
                 username: repositoryOwner,
             });
             allRepos = userRepos.data;
-        } else if (accountType === "organization") {
+        } else if (accountType === "private") {
             const { data: teamsInOrg } = await octokit.teams.list({
                 org: repositoryOwner,
             });
@@ -152,17 +152,6 @@ Apify.main(async () => {
                 id: user.login,
             };
 
-            // Get user's contributions to repo from the last X number of weeks
-            const userContributions = mergeContributions(contributions, user, numberOfWeeks);
-
-            for (const [key, value] of Object.entries(userContributions)) {
-                switch (key) {
-                    case 'a': userEntry.additions = value;
-                    case 'd': userEntry.deletions = value;
-                    case 'c': userEntry.commits = value;
-                }
-            }
-
             // Get user PRs - created
             const pullsCreatedByUser = filteredPulls.filter((pull) => pull.user.login === user.login);
             userEntry.pullsCreated = pullsCreatedByUser.length;
@@ -178,6 +167,21 @@ Apify.main(async () => {
                 repoStats.push(userEntry);
                 console.log(`Adding ${user.login}'s contributions \n`);
             }
+
+            // Get user's contributions to repo from the last X number of weeks
+            try {
+                const userContributions = mergeContributions(contributions, user, numberOfWeeks);
+
+                for (const [key, value] of Object.entries(userContributions)) {
+                    switch (key) {
+                        case 'a': userEntry.additions = value;
+                        case 'd': userEntry.deletions = value;
+                        case 'c': userEntry.commits = value;
+                    }
+                }
+            } catch (e) {
+                console.log(e, '\n', 'Contributions:', contributions);
+            }
         }
 
         // Push the stats for organization-wide analysis
@@ -187,6 +191,7 @@ Apify.main(async () => {
         // Get top 3 contributors in each repo
         const mergedKeyStats = getTopContributors(repoStats);
         if (mergedKeyStats.length) topContributorsInRepo.push({ [repository]: mergedKeyStats });
+
         // Sleep to avoid pushing rate limits
         await Apify.utils.sleep(100);
     }

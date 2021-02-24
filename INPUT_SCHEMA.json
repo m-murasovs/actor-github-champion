@@ -21,16 +21,16 @@
         "accountType": {
             "title": "Type of account",
             "type": "string",
-            "description": "Organization or user. For users, only public repositories an be listed.",
-            "default": "organization",
+            "description": "For private repositories, you will need an API token with the 'repo' permission.",
+            "default": "public",
             "editor": "select",
             "enum": [
-                "organization",
-                "user"
+                "private",
+                "public"
             ],
             "enumTitles": [
-                "Organization",
-                "User"
+                "Private",
+                "Public"
             ]
         },
         "repositories": {

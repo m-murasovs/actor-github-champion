@@ -14,16 +14,20 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
         if (item.author.login === user.login) {
             const contributionsArray = item.weeks.slice(Math.max(item.weeks.length - numberOfWeeks, 0));
 
-            contributionsArray.map((contr) => {
-                for (let [key, value] of Object.entries(contr)) {
-                    // Exclude the 'week' key from the contributions object
-                    if (result[key] && key !== 'w') {
-                        result[key] += value;
-                    } else if (!result[key] && key !== 'w') {
-                        result[key] = value;
+            try {
+                contributionsArray.map((contr) => {
+                    for (let [key, value] of Object.entries(contr)) {
+                        // Exclude the 'week' key from the contributions object
+                        if (result[key] && key !== 'w') {
+                            result[key] += value;
+                        } else if (!result[key] && key !== 'w') {
+                            result[key] = value;
+                        }
                     }
-                }
-            });
+                });
+            } catch (e) {
+                console.log(e, '\n', 'Contributions:', contributions);
+            }
         }
     });
     return result;
@@ -67,7 +71,7 @@ exports.hasContributions = (userEntry) => {
 exports.getTopContributors = (repoStats) => {
     const topContributors = [];
     if (repoStats.length) {
-        repoStats.map(({ id, pullReviews, issuesClosed, pullsCreated }) => {
+        repoStats.map(({ id, pullReviews, issuesClosed, pullsCreated, additions, deletions, commits }) => {
             // Pull reviews and closed issues count for 1 point, created pull requests count for half a point
             const pullsCreatedScore = pullsCreated * 0.5;
             const pullReviewsScore = pullReviews * 0.75;
@@ -77,7 +81,10 @@ exports.getTopContributors = (repoStats) => {
                 total: (pullReviewsScore + issuesClosed + pullsCreatedScore),
                 pullReviews,
                 issuesClosed,
-                pullsCreated
+                pullsCreated,
+                additions,
+                deletions,
+                commits,
             });
         });
     }
