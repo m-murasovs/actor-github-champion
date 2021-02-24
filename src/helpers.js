@@ -10,11 +10,11 @@ exports.getAllRepoNames = (allOrgRepos) => {
 exports.mergeContributions = (contributions, user, numberOfWeeks) => {
     const result = {};
 
-    contributions.map((item) => {
-        if (item.author.login === user.login) {
-            const contributionsArray = item.weeks.slice(Math.max(item.weeks.length - numberOfWeeks, 0));
+    try {
+        contributions.map((item) => {
+            if (item.author.login === user.login) {
+                const contributionsArray = item.weeks.slice(Math.max(item.weeks.length - numberOfWeeks, 0));
 
-            try {
                 contributionsArray.map((contr) => {
                     for (let [key, value] of Object.entries(contr)) {
                         // Exclude the 'week' key from the contributions object
@@ -25,11 +25,11 @@ exports.mergeContributions = (contributions, user, numberOfWeeks) => {
                         }
                     }
                 });
-            } catch (e) {
-                console.log(e, '\n', 'Contributions:', contributions);
             }
-        }
-    });
+        });
+    } catch (e) {
+        console.log(e, '\n', 'Contributions:', contributions);
+    }
     return result;
 };
 

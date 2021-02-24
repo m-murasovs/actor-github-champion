@@ -169,18 +169,14 @@ Apify.main(async () => {
             }
 
             // Get user's contributions to repo from the last X number of weeks
-            try {
-                const userContributions = mergeContributions(contributions, user, numberOfWeeks);
+            const userContributions = mergeContributions(contributions, user, numberOfWeeks);
 
-                for (const [key, value] of Object.entries(userContributions)) {
-                    switch (key) {
-                        case 'a': userEntry.additions = value;
-                        case 'd': userEntry.deletions = value;
-                        case 'c': userEntry.commits = value;
-                    }
+            for (const [key, value] of Object.entries(userContributions)) {
+                switch (key) {
+                    case 'a': userEntry.additions = value;
+                    case 'd': userEntry.deletions = value;
+                    case 'c': userEntry.commits = value;
                 }
-            } catch (e) {
-                console.log(e, '\n', 'Contributions:', contributions);
             }
         }
 
