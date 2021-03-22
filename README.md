@@ -6,7 +6,7 @@ Celebrate your organization's unsung heroes, identify the quiet contributors who
 
 Find the top 3 contributors from your organization and each of your repositories for your chosen time period. The winners are decided by number of assigned issues closed, number of PR reviews, and number of PRs opened. In addition, the actor also gathers metrics like additions, deletions, and commits for everyone who contributed to the repo, if you're into more details.
 
-You can [integrate](/integrations) this actor with your curent sprints. Use Apify [schedules](https://docs.apify.com/schedules) to synchronize these reports with your company's sprints. Combine it with [webhooks](https://docs.apify.com/webhooks) and have the results sent to you right after they are gathered.
+You can [integrate](./integrations) this actor with your curent sprints. Use Apify [schedules](https://docs.apify.com/schedules) to synchronize these reports with your company's sprints. Combine it with [webhooks](https://docs.apify.com/webhooks) and have the results sent to you right after they are gathered.
 
 Who is your organization's GitHub Champion?
 
